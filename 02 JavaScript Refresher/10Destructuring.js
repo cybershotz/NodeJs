@@ -11,3 +11,10 @@ const printName = ({ Name }) => {
 }
 
 printName(person)
+
+const { Name, Age } = person;
+console.log(Name, Age)
+
+const hobbies = ['Sports', 'Cooking'];
+const [hobby1, hobby2] = hobbies
+console.log(hobby1, hobby2);
