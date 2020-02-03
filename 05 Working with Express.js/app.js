@@ -2,13 +2,11 @@ const express = require('express');
 
 const app = express();
 
-app.use((req, res, next) => {
-    console.log('In the middleware');
-    next() // Allows the request to continue to next middleware
+app.use('/add-product', (req, res, next) => {
+    res.send('<h1>Hello from Add Product!</h1>')
 })
 
-app.use((req, res, next) => {
-    console.log('In the second middleware');
+app.use('/', (req, res, next) => {
     res.send('<h1>Hello from Express!</h1>')
 })
 
