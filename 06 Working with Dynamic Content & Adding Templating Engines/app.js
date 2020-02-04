@@ -8,6 +8,9 @@ const shopRoutes = require('./routes/shop');
 
 const app = express();
 
+app.set('view engine', 'pug')
+app.set('views', 'views') // Load Views from 'views' folder
+
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, 'public')))
 
