@@ -37,4 +37,11 @@ module.exports = class Product {
         getProductsFromFile(cb);
     }
 
+    static findById(id, cb) {
+        getProductsFromFile(products => {
+            const product = products.find(p => p.id === id);
+            cb(product);
+        })
+    }
+
 }
