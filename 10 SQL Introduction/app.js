@@ -15,7 +15,13 @@ const app = express();
 app.set('view engine', 'ejs')
 app.set('views', 'views') // Load Views from 'views' folder
 
-db.execute('SELECT * FROM products').then().catch()
+db.execute('SELECT * FROM products')
+    .then(result => {
+        console.log('result', result);
+    })
+    .catch(err => {
+        console.log('err', err);
+    })
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, 'public')))
