@@ -15,13 +15,15 @@ exports.postAddProduct = (req, res, next) => {
     imageUrl = req.body.imageUrl;
     description = req.body.description;
     price = req.body.price;
-    Product.create({
+
+    req.user.createProduct({ // On one to many relation sequelize adds this magic method to user object
         title: title,
         imageUrl: imageUrl,
         description: description,
         price: price
-    }).then(() => {
-        // res.redirect('/')
+    })
+    .then(() => {
+        res.redirect('/admin/products')
     }).catch(err => {
         console.log(err)
     })
