@@ -21,6 +21,15 @@ app.set('views', 'views') // Load Views from 'views' folder
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, 'public')))
 
+app.use((req, res, next) => { // On All Incoming Request this gets executed
+    User.findByPk(1)
+        .then(user => {
+            req.user = user; // Add a Sequelize Use object to request for upcoming middlewares 
+            next();
+        })
+        .catch(err => console.log(err))
+})
+
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 
@@ -29,11 +38,25 @@ app.use(errorController.get404)
 Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
 User.hasMany(Product);
 
-sequelize.sync({ force: true })
+sequelize
+    // .sync({ force: true })
+    .sync()
     .then(result => {
         // console.log(result)
+        return User.findByPk(1);
+    })
+    .then(user => {
+        if (!user) {
+            return User.create({name: 'Ammar', email: 'ammar4568@gmail.com'})
+        }
+        // return Promise.resolve(user)
+        return user; // Resolves to Promise inside a then block
+    })
+    .then(user => {
+        // console.log(user)
         app.listen(3000);
-    }).catch(err => {
+    })
+    .catch(err => {
         console.log(err)
     })
 // It creates models with database tables by creating the appropriate tables
