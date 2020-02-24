@@ -59,7 +59,10 @@ sequelize
         return user; // Resolves to Promise inside a then block
     })
     .then(user => {
+        return user.createCart()
         // console.log(user)
+    })
+    .then(cart => { 
         app.listen(3000);
     })
     .catch(err => {
