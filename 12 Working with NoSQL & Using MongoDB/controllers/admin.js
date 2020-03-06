@@ -56,20 +56,17 @@ exports.postEditProduct = (req, res, next) => {
         .then(result => {
             res.redirect('/admin/products')
         })
-    .catch(err => console.log(err)) 
+        .catch(err => console.log(err))
 };
 
-// exports.postDeleteProduct = (req, res, next) => {
-//     const prodId = req.body.productId;
-//     Product.findByPk(prodId)
-//     .then(product => {
-//         return product.destroy();
-//     })
-//     .then(result => {
-//         res.redirect('/admin/products')
-//     })
-//     .catch(err => console.log(err))
-// }
+exports.postDeleteProduct = (req, res, next) => {
+    const prodId = req.body.productId;
+    Product.deleteById(prodId)
+        .then(result => {
+            res.redirect('/admin/products')
+        })
+        .catch(err => console.log(err))
+}
 
 exports.getProducts = (req, res, next) => {
     Product.fetchAll()
