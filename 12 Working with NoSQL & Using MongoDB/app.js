@@ -24,6 +24,7 @@ app.use((req, res, next) => { // On All Incoming Request this gets executed
     //         next();
     //     })
     //     .catch(err => console.log(err))
+    next();
 })
 
 app.use('/admin', adminRoutes);
