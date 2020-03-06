@@ -1,3 +1,4 @@
+const mongoDb = require('mongodb')
 const getDb = require('../util/database').getDb
 
 class Product {
@@ -21,12 +22,26 @@ class Product {
 
     static fetchAll() {
         const db = getDb();
-        return db.collection('products').find().toArray()
-        .then(products => {
-            console.log(products);
-            return products;
-        })
-        .catch(err => console.log(err))
+        return db.collection('products')
+            .find() // This returns a cursor
+            .toArray() // This returns all products
+            .then(products => {
+                console.log(products);
+                return products;
+            })
+            .catch(err => console.log(err))
+    }
+
+    static findById(prodId) {
+        const db = getDb();
+        return db.collection('products')
+            .find({ _id: new mongoDb.ObjectID(prodId) }) // This returns a cursor
+            .next() // This gets the first item
+            .then(product => {
+                console.log(product);
+                return product;
+            })
+            .catch(err => console.log(err))
     }
 }
 
