@@ -1,3 +1,4 @@
+const mongoDB = require('mongodb')
 const Product = require('../models/product')
 
 exports.getAddProduct = (req, res, next) => {
@@ -45,25 +46,19 @@ exports.getEditProduct = (req, res, next) => {
         .catch(err => console.log(err))
 }
 
-// exports.postEditProduct = (req, res, next) => {
-//     const prodId = req.body.productId;
-//     const title = req.body.title;
-//     const imageUrl = req.body.imageUrl;
-//     const description = req.body.description;
-//     const price = req.body.price;
-//     Product.findByPk(prodId)
-//     .then(product => {
-//         product.title = title;
-//         product.imageUrl = imageUrl;
-//         product.description = description;
-//         product.price = price;
-//         return product.save();
-//     })
-//     .then(result => {
-//         res.redirect('/admin/products')
-//     })
-//     .catch(err => console.log(err)) 
-// };
+exports.postEditProduct = (req, res, next) => {
+    const prodId = req.body.productId;
+    const title = req.body.title;
+    const imageUrl = req.body.imageUrl;
+    const description = req.body.description;
+    const price = req.body.price;
+    const product = new Product(title, price, description, imageUrl, new mongoDB.ObjectID(prodId))
+    product.save()
+        .then(result => {
+            res.redirect('/admin/products')
+        })
+    .catch(err => console.log(err)) 
+};
 
 // exports.postDeleteProduct = (req, res, next) => {
 //     const prodId = req.body.productId;
