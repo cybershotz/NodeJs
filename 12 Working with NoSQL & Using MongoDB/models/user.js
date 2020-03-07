@@ -28,7 +28,7 @@ class User {
         }
         const updatedCart = { items: updatedCartItems }
         const db = getDb();
-        db.collection('users')
+        return db.collection('users')
             .updateOne(
                 { _id: new ObjectID(this._id) },
                 { $set: { cart: updatedCart } }
@@ -53,11 +53,16 @@ class User {
                     }
                 })
             })
-        // db.collection('users')
-        //     .updateOne(
-        //         { _id: new ObjectID(this._id) },
-        //         { $set: { cart: updatedCart } }
-        //     )
+    }
+
+    deleteItemFromCart(productId) {
+        const updatedCartItems = this.cart.items.filter(item => item.productId.toString() != productId.toString());
+        const db = getDb();
+        return db.collection('users')
+            .updateOne(
+                { _id: new ObjectID(this._id) },
+                { $set: { cart: { items: updatedCartItems } } }
+            )
     }
 
     static findById(userId) {
