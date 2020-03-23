@@ -19,7 +19,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, 'public')))
 
 app.use((req, res, next) => { // On All Incoming Request this gets executed
-    User.findById("5e78cb0081e4412910e9bde5")
+    User.findById("5e78f883e8ebc83348f43281")
         .then(user => {
             req.user = user;
             next();
@@ -34,18 +34,18 @@ app.use(errorController.get404)
 
 mongoose.connect('mongodb+srv://ammar:HSDI2cHcKTqdBx4s@cluster0-mylyc.mongodb.net/shop?retryWrites=true&w=majority')
     .then(result => {
-        User.findOne(user => {
-            if (!user) {
-                const newUser = new User({
-                    name: 'Ammar',
-                    email: 'ammar@test.com',
-                    cart: {
-                        items: []
-                    }
-                })
-                newUser.save();
-            }
-        })
+        // User.findOne(user => {
+        //     if (!user) {
+        //         const newUser = new User({
+        //             name: 'Ammar',
+        //             email: 'ammar@test.com',
+        //             cart: {
+        //                 items: []
+        //             }
+        //         })
+        //         newUser.save();
+        //     }
+        // })
         app.listen(3000);
     })
     .catch(err => console.log(err))
