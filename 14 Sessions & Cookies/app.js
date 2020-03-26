@@ -3,6 +3,7 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const session = require('express-session');
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
@@ -18,7 +19,7 @@ app.set('views', 'views') // Load Views from 'views' folder
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, 'public')))
-
+app.use(session({secret: 'my secret', resave: false, saveUninitialized: false}))
 app.use((req, res, next) => { // On All Incoming Request this gets executed
     User.findById("5e78f883e8ebc83348f43281")
         .then(user => {
