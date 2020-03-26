@@ -33,14 +33,17 @@ app.use(session({
     store: store
 }))
 
-// app.use((req, res, next) => { // On All Incoming Request this gets executed
-//     User.findById("5e78f883e8ebc83348f43281")
-//         .then(user => {
-//             req.user = user;
-//             next();
-//         })
-//         .catch(err => console.log(err))
-// })
+app.use((req, res, next) => { // On All Incoming Request this gets executed
+    if (!req.session.user) {
+        return next();
+    }
+    User.findById(req.session.user._id)
+        .then(user => {
+            req.user = user;
+            next();
+        })
+        .catch(err => console.log(err))
+})
 
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
