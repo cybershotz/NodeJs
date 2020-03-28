@@ -56,7 +56,7 @@ exports.postEditProduct = (req, res, next) => {
 
     Product.findById(prodId)
         .then(product => {
-            
+
             product.title = title;
             product.imageUrl = imageUrl;
             product.description = description;
@@ -79,7 +79,7 @@ exports.postDeleteProduct = (req, res, next) => {
 }
 
 exports.getProducts = (req, res, next) => {
-    Product.find()
+    Product.find({ userId: req.user._id })
         // .select('name title -_id') // only selects name, title and remove _id
         // .populate('userId') // populates user data 
         .then(products => {
