@@ -129,9 +129,13 @@ exports.postReset = (req, res, next) => {
             console.log('err')
             return res.redirect('/reset')
         }
-        const token = buffer.toString();
+        const token = buffer.toString('hex');
         User.findOne({ email: req.body.email })
             .then(user => {
+                if (!user) {
+                    req.flash('error', 'No user with this email exist')
+                    return res.redirect('/reset')
+                }
                 user.resetToken = token;
                 user.resetTokenExpiration = Date.now() + 360000; // One hour from now
                 return user.save();
