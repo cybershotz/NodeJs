@@ -10,7 +10,16 @@ router.get('/signup', authController.getSignup)
 
 router.post('/login', authController.postLogin)
 
-router.post('/signup', check('email').isEmail().withMessage('Please enter a valid email.'),
+router.post('/signup',
+    check('email')
+        .isEmail()
+        .withMessage('Please enter a valid email.')
+        .custom((value, { req }) => { // Custom Validation
+            if (value == 'test@test.com') {
+                throw new Error('This email is forbidden')
+            }
+            return true; // Else return true
+        }),
     authController.postSignup)
 
 router.post('/logout', authController.postLogout)
