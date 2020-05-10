@@ -9,6 +9,7 @@ exports.getAddProduct = (req, res, next) => {
         editing: false,
         hasError: false,
         errorMessage: null,
+        validationErrors: []
     })
 }
 
@@ -21,12 +22,12 @@ exports.postAddProduct = (req, res, next) => {
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        // console.log(errors.array())
+        console.log(errors.array())
         return res.status(422)
             .render('admin/edit-product', {
                 path: '/admin/add-product',
                 pageTitle: 'Add Product',
-                editing:false,
+                editing: false,
                 hasError: true,
                 errorMessage: errors.array()[0].msg,
                 product: {
@@ -64,7 +65,8 @@ exports.getEditProduct = (req, res, next) => {
                 path: '/admin/edit-product',
                 editing: editMode,
                 product: product,
-                isAuthenticated: req.session.isLoggedIn
+                errorMessage: null,
+                validationErrors: []
             })
         })
         .catch(err => console.log(err))
@@ -76,6 +78,27 @@ exports.postEditProduct = (req, res, next) => {
     const imageUrl = req.body.imageUrl;
     const description = req.body.description;
     const price = req.body.price;
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        console.log(errors.array())
+        return res.status(422)
+            .render('admin/edit-product', {
+                path: '/admin/add-product',
+                pageTitle: 'Add Product',
+                editing: true,
+                hasError: true,
+                errorMessage: errors.array()[0].msg,
+                product: {
+                    title,
+                    imageUrl,
+                    description,
+                    price,
+                    _id: prodId
+                },
+                validationErrors: errors.array(),
+            })
+    }
 
     Product.findById(prodId)
         .then(product => {
