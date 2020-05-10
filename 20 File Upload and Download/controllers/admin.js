@@ -16,9 +16,29 @@ exports.getAddProduct = (req, res, next) => {
 exports.postAddProduct = (req, res, next) => {
     // console.log(req.body);
     title = req.body.title;
-    imageUrl = req.file;
+    image = req.file;
     description = req.body.description;
     price = req.body.price;
+
+    if (!image) {
+        return res.status(422)
+            .render('admin/edit-product', {
+                path: '/admin/add-product',
+                pageTitle: 'Add Product',
+                editing: false,
+                hasError: true,
+                errorMessage: 'Selected attachment must be image',
+                product: {
+                    title,
+                    description,
+                    price
+                },
+                validationErrors: []
+            })
+    }
+
+    const imageUrl = image.path
+
     console.log('imageUrl', imageUrl)
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -82,7 +102,8 @@ exports.getEditProduct = (req, res, next) => {
 exports.postEditProduct = (req, res, next) => {
     const prodId = req.body.productId;
     const title = req.body.title;
-    const imageUrl = req.body.imageUrl;
+    const image = req.file;
+    // const imageUrl = req.body.imageUrl;
     const description = req.body.description;
     const price = req.body.price;
 
@@ -98,7 +119,6 @@ exports.postEditProduct = (req, res, next) => {
                 errorMessage: errors.array()[0].msg,
                 product: {
                     title,
-                    imageUrl,
                     description,
                     price,
                     _id: prodId
@@ -113,7 +133,9 @@ exports.postEditProduct = (req, res, next) => {
                 return res.redirect('/')
             }
             product.title = title;
-            product.imageUrl = imageUrl;
+            if (image) { // User has selected a valid image
+                product.imageUrl = image.path;
+            }
             product.description = description;
             product.price = price;
             return product.save()
