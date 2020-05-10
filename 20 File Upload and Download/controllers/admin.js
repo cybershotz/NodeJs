@@ -22,7 +22,7 @@ exports.postAddProduct = (req, res, next) => {
     console.log('imageUrl', imageUrl)
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        console.log(errors.array())
+        // console.log(errors.array())
         return res.status(422)
             .render('admin/edit-product', {
                 path: '/admin/add-product',
