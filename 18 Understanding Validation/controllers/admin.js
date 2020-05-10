@@ -1,4 +1,5 @@
 const Product = require('../models/product')
+const { validationResult } = require('express-validator/check')
 
 exports.getAddProduct = (req, res, next) => {
     // res.sendFile(path.join(rootDir, 'views', 'add-product.html'));
@@ -6,7 +7,8 @@ exports.getAddProduct = (req, res, next) => {
         pageTitle: 'Add Product',
         path: '/admin/add-product',
         editing: false,
-        isAuthenticated: req.session.isLoggedIn
+        hasError: false,
+        errorMessage: null,
     })
 }
 
@@ -16,6 +18,27 @@ exports.postAddProduct = (req, res, next) => {
     imageUrl = req.body.imageUrl;
     description = req.body.description;
     price = req.body.price;
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        // console.log(errors.array())
+        return res.status(422)
+            .render('admin/edit-product', {
+                path: '/admin/add-product',
+                pageTitle: 'Add Product',
+                editing:false,
+                hasError: true,
+                errorMessage: errors.array()[0].msg,
+                product: {
+                    title,
+                    imageUrl,
+                    description,
+                    price
+                },
+                validationErrors: errors.array()
+            })
+    }
+
     const product = new Product({ title, price, description, imageUrl, userId: req.user }); // req.user will extract _id
     product.save()
         .then(() => {
