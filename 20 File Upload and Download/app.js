@@ -23,13 +23,23 @@ const store = new MongoDBStore({
     uri: MONGODB_URI,
     collection: 'sessions'
 })
+
 const csrfProtection = csrf()
+
+const fileStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'images')
+    },
+    filename: (req, file, cb) => {
+        cb(null, new Date().toISOString() + '-' + file.originalname);
+    }
+})
 
 app.set('view engine', 'ejs')
 app.set('views', 'views') // Load Views from 'views' folder
 
 app.use(bodyParser.urlencoded({ extended: false }))
-app.use(multer({ dest: 'images' }).single('single'))
+app.use(multer({ storage: fileStorage }).single('image'))
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(session({
     secret: 'my secret',
