@@ -196,14 +196,27 @@ exports.getInvoice = (req, res, next) => {
             const invoicePath = path.join('data', 'invoices', invoiceName);
 
 
+            /* 
+            // Preloaded Data
             fs.readFile(invoicePath, (err, data) => {
                 if (err) {
                     console.log('err');
                     return next(err)
                 }
                 res.setHeader('Content-Type', 'application/pdf')
+                // res.setHeader('Content-Disposition', 'attachment; filename="' + invoiceName + '"')
                 res.setHeader('Content-Disposition', 'inline; filename="' + invoiceName + '"')
                 res.send(data);
-            })
+            }) */
+
+            // Streaming Data
+            file = fs.createReadStream(invoicePath);
+            res.setHeader('Content-Type', 'application/pdf')
+            // res.setHeader('Content-Disposition', 'attachment; filename="' + invoiceName + '"')
+            res.setHeader('Content-Disposition', 'inline; filename="' + invoiceName + '"')
+            file.pipe(res);
+        })
+        .catch(err => {
+            next(err)
         })
 }
