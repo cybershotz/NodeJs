@@ -1,5 +1,7 @@
 const Product = require('../models/product')
 const Order = require('../models/order')
+const fs = require('fs');
+const path = require('path')
 
 exports.getProducts = (req, res, next) => {
     Product.find()
@@ -178,4 +180,22 @@ exports.getCheckout = (req, res, next) => {
         pageTitle: 'Checkout',
         isAuthenticated: req.session.isLoggedIn
     })
+}
+
+exports.getInvoice = (req, res, next) => {
+    console.log('getInvoice');
+    const invoiceId = req.params.orderId;
+    const invoiceName = 'invoice-' + invoiceId + '.pdf';
+    console.log('invoiceName', invoiceName);
+    const invoicePath = path.join('data', 'invoices', invoiceName);
+    console.log('invoicePath', invoicePath);
+
+    fs.readFile(invoicePath, (err, data) => {
+        if (err) {
+            console.log('err');
+            return next(err)
+        }
+        res.send(data);
+    })
+
 }
