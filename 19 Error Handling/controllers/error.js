@@ -5,3 +5,11 @@ exports.get404 = (req, res, next) => {
         isAuthenticated: req.session.isLoggedIn
     })
 }
+
+exports.get500 = (req, res, next) => {
+    res.status(500).render('500', {
+        path: '500',
+        pageTitle: 'Error',
+        isAuthenticated: req.session.isLoggedIn
+    })
+}

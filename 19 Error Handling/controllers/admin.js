@@ -57,6 +57,7 @@ exports.getEditProduct = (req, res, next) => {
     const prodId = req.params.productId;
     Product.findById(prodId)
         .then(product => {
+            throw new Error('Forced Error');
             if (!product) {
                 return res.redirect('/')
             }
@@ -69,7 +70,11 @@ exports.getEditProduct = (req, res, next) => {
                 validationErrors: []
             })
         })
-        .catch(err => console.log(err))
+        .catch(err => {
+            const error = new Error(err);
+            error.httpStatusCode = 500;
+            return next(error);
+        })
 }
 
 exports.postEditProduct = (req, res, next) => {
