@@ -39,7 +39,7 @@ exports.postAddProduct = (req, res, next) => {
 
     const imageUrl = image.path
 
-    console.log('imageUrl', imageUrl)
+    // console.log('imageUrl', imageUrl)
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         // console.log(errors.array())
@@ -109,7 +109,7 @@ exports.postEditProduct = (req, res, next) => {
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        console.log(errors.array())
+        // console.log(errors.array())
         return res.status(422)
             .render('admin/edit-product', {
                 path: '/admin/add-product',
@@ -168,7 +168,7 @@ exports.getProducts = (req, res, next) => {
         // .select('name title -_id') // only selects name, title and remove _id
         // .populate('userId') // populates user data 
         .then(products => {
-            console.log(products);
+            // console.log(products);
             res.render('admin/products', {
                 prods: products,
                 pageTitle: 'Admin Products',
