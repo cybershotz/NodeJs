@@ -19,16 +19,23 @@ exports.createPost = (req, res, next) => {
         err.statusCode = 422; // 422 => Validation Failed
         throw err;
     }
+    if (!req.file) {
+        const err = new Error('No image provided');
+        err.statusCode = 422;
+        throw err;
+    }
     const title = req.body.title;
     const content = req.body.content;
+    const imageUrl = req.file.path;
     const post = new Post({
         title,
         content,
-        imageUrl: 'images/VirtualBox_Ubuntu.png',
+        imageUrl,
         creator: {
             name: 'Ammar'
         }
     })
+    console.log('post', post);
     post.save()
         .then(result => {
             res.status(201).json({ // Status 201 means that a resource was also created on our side and success
