@@ -5,6 +5,8 @@ const path = require('path')
 const multer = require('multer')
 
 const feedRoute = require('./routes/feed')
+const authRoute = require('./routes/auth')
+
 const app = express();
 
 const MONGODB_URI = 'mongodb+srv://ammar:HSDI2cHcKTqdBx4s@cluster0-mylyc.mongodb.net/messages'
@@ -42,6 +44,7 @@ app.use((req, res, next) => {
 })
 
 app.use('/feed', feedRoute);
+app.use('/auth', authRoute);
 
 app.use((error, req, res, next) => {
     console.log(error);
