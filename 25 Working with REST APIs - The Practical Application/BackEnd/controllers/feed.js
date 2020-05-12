@@ -2,30 +2,22 @@ const { validationResult } = require('express-validator/check');
 const Post = require('../models/post')
 
 exports.getPosts = (req, res, next) => {
-    res.status(200).json({
-        posts: [
-            {
-                _id: '1',
-                title: 'First Post',
-                content: 'This is the first post!',
-                imageUrl: 'images/VirtualBox_Ubuntu.png',
-                creator: {
-                    name: 'Ammar'
-                },
-                createdAt: new Date()
-            }
-        ]
-    })
+    Post.find()
+        .then(posts => {
+            res.status(200).json({
+                message: 'Posts fetched',
+                posts
+            })
+        })
+        .catch(handleError)
 }
 
 exports.createPost = (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        res.status(422) // 422 => Validation Failed
-            .json({
-                message: 'Validation failed, entered data is incorrect',
-                errors: errors.array()
-            })
+        const err = new Error('Validation failed, entered data is incorrect');
+        err.statusCode = 422; // 422 => Validation Failed
+        throw err;
     }
     const title = req.body.title;
     const content = req.body.content;
@@ -44,5 +36,26 @@ exports.createPost = (req, res, next) => {
                 post: result
             })
         })
-        .catch(err => console.log(err))
+        .catch(handleError)
+}
+
+exports.getPost = (req, res, next) => {
+    const postId = req.params.postId;
+    Post.findById(postId)
+        .then(post => {
+            if (!post) {
+                const error = new Error('Could not find post.');
+                error.statusCode = 404;
+                throw error;
+            }
+            res.status(200).json({ message: 'Post fetched.', post })
+        })
+        .catch(handleError)
+}
+
+const handleError = (err) => {
+    if (!err.statusCode) {
+        err.statusCode = 500;
+    }
+    next(err)
 }
