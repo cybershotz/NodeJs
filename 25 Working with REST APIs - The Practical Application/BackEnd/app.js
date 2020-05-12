@@ -1,7 +1,10 @@
 const express = require('express');
 const bodyParser = require('body-parser')
+const mongoose = require('mongoose')
 
 const feedRoute = require('./routes/feed')
+
+const MONGODB_URI = 'mongodb+srv://ammar:HSDI2cHcKTqdBx4s@cluster0-mylyc.mongodb.net/messages'
 
 const app = express();
 
@@ -17,4 +20,11 @@ app.use((req, res, next) => {
 
 app.use('/feed', feedRoute);
 
-app.listen(8080);
+
+mongoose.connect(MONGODB_URI)
+    .then(result => {
+        app.listen(8080);
+    })
+    .catch(err => {
+        console.log('err')
+    })
