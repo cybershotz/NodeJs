@@ -53,9 +53,7 @@ exports.getPost = (req, res, next) => {
     Post.findById(postId)
         .then(post => {
             if (!post) {
-                const error = new Error('Could not find post.');
-                error.statusCode = 404;
-                throw error;
+                postNotFound()
             }
             res.status(200).json({ message: 'Post fetched.', post })
         })
@@ -87,9 +85,7 @@ exports.updatePost = (req, res, next) => {
     Post.findById(postId)
         .then(post => {
             if (!post) {
-                const error = new Error('Could not find post.');
-                error.statusCode = 404;
-                throw error;
+                postNotFound()
             }
             if (imageUrl != post.imageUrl) {
                 clearImage(imageUrl);
@@ -105,6 +101,24 @@ exports.updatePost = (req, res, next) => {
         .catch(handleError)
 }
 
+exports.deletePost = (req, res, next) => {
+    const postId = req.params.postId;
+    let imageUrl;
+    Post.findById(postId)
+        .then(post => {
+            if (!post) {
+                postNotFound();
+            }
+            imageUrl = post.imageUrl;
+            return post.remove();
+        })
+        .then(result => {
+            clearImage(imageUrl);
+            res.status(200).json({ message: 'Post Deleted' })
+        })
+        .catch(handleError)
+}
+
 const handleError = (err) => {
     if (!err.statusCode) {
         err.statusCode = 500;
@@ -112,7 +126,13 @@ const handleError = (err) => {
     next(err)
 }
 
-const clearImage = filePath => {
-    filePath = path.join(__dirname, '..', filePath);
+const clearImage = imagePath => {
+    filePath = path.join(__dirname, '..', imagePath);
     fs.unlink(filePath, err => console.log(err));
+}
+
+const postNotFound = () => {
+    const error = new Error('Could not find post.');
+    error.statusCode = 404;
+    throw error;
 }
