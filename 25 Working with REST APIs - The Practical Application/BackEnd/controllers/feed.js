@@ -24,7 +24,7 @@ exports.getPosts = (req, res, next) => {
                 totalItems
             })
         })
-        .catch(handleError)
+        .catch(err => handleError(err, next))
 }
 
 exports.createPost = (req, res, next) => {
@@ -66,7 +66,7 @@ exports.createPost = (req, res, next) => {
                 creator: { _id: creator._id, name: creator.name }
             })
         })
-        .catch(handleError)
+        .catch(err => handleError(err, next))
 }
 
 exports.getPost = (req, res, next) => {
@@ -78,7 +78,7 @@ exports.getPost = (req, res, next) => {
             }
             res.status(200).json({ message: 'Post fetched.', post })
         })
-        .catch(handleError)
+        .catch(err => handleError(err, next))
 }
 
 exports.updatePost = (req, res, next) => {
@@ -108,6 +108,11 @@ exports.updatePost = (req, res, next) => {
             if (!post) {
                 postNotFound()
             }
+            if (post.creator.toString() !== req.userId) {
+                const err = new Error('Not Authorized');
+                err.statusCode = 403;
+                throw err;
+            }
             if (imageUrl != post.imageUrl) {
                 clearImage(imageUrl);
             }
@@ -119,7 +124,7 @@ exports.updatePost = (req, res, next) => {
         .then(result => {
             res.status(200).json({ message: 'Post updated', post: result })
         })
-        .catch(handleError)
+        .catch(err => handleError(err, next))
 }
 
 exports.deletePost = (req, res, next) => {
@@ -130,6 +135,11 @@ exports.deletePost = (req, res, next) => {
             if (!post) {
                 postNotFound();
             }
+            if (post.creator.toString() !== req.userId) {
+                const err = new Error('Not Authorized');
+                err.statusCode = 403;
+                throw err;
+            }
             imageUrl = post.imageUrl;
             return post.remove();
         })
@@ -137,10 +147,10 @@ exports.deletePost = (req, res, next) => {
             clearImage(imageUrl);
             res.status(200).json({ message: 'Post Deleted' })
         })
-        .catch(handleError)
+        .catch(err => handleError(err, next))
 }
 
-const handleError = (err) => {
+const handleError = (err, next) => {
     if (!err.statusCode) {
         err.statusCode = 500;
     }
