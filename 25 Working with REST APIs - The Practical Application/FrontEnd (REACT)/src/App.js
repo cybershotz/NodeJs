@@ -62,6 +62,7 @@ class App extends Component {
     fetch('http://localhost:8080/auth/login', {
       method: 'POST',
       headers: {
+        Authorization: 'Bearer ' + this.props.token,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
@@ -112,6 +113,7 @@ class App extends Component {
     fetch('http://localhost:8080/auth/signup', {
       method: 'PUT',
       headers: {
+        Authorization: 'Bearer ' + this.props.token,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
