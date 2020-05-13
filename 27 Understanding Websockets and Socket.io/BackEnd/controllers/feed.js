@@ -30,6 +30,7 @@ exports.getPosts = (req, res, next) => {
     const perPage = 2;
     let totalItems;
     Post.find()
+        .populate('creator')
         .countDocuments()
         .then(count => {
             totalItems = count;
@@ -80,7 +81,10 @@ exports.createPost = (req, res, next) => {
             return user.save();
         })
         .then(result => {
-            io.getIO().emit('posts', { action: 'create', post: post })
+            io.getIO().emit('posts', {
+                action: 'create',
+                post: { ...post, creator: { _id: req.userId, name: creator.name } }
+            })
             res.status(201).json({ // Status 201 means that a resource was also created on our side and success
                 message: 'Post created successfully',
                 post: post,
@@ -123,13 +127,14 @@ exports.updatePost = (req, res, next) => {
         err.statusCode = 422;
         throw err;
     }
-
+    let updatedPost;
     Post.findById(postId)
+        .populate('creator')
         .then(post => {
             if (!post) {
                 postNotFound()
             }
-            if (post.creator.toString() !== req.userId) {
+            if (post.creator._id.toString() !== req.userId) {
                 const err = new Error('Not Authorized');
                 err.statusCode = 403;
                 throw err;
@@ -137,12 +142,17 @@ exports.updatePost = (req, res, next) => {
             if (imageUrl != post.imageUrl) {
                 clearImage(imageUrl);
             }
+            updatedPost = post;
             post.title = title;
             post.imageUrl = imageUrl;
             post.content = content;
             return post.save();
         })
         .then(result => {
+            io.getIO().emit('posts', {
+                action: 'update',
+                post: updatedPost
+            })
             res.status(200).json({ message: 'Post updated', post: result })
         })
         .catch(err => handleError(err, next))
