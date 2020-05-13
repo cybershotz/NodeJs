@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const Post = require('../models/post')
 const User = require('../models/user')
+const io = require('../socket');
 
 /* exports.getPosts = async (req, res, next) => {
     const currentPage = req.query.page || 1;
@@ -79,6 +80,7 @@ exports.createPost = (req, res, next) => {
             return user.save();
         })
         .then(result => {
+            io.getIO().emit('posts', { action: 'create', post: post })
             res.status(201).json({ // Status 201 means that a resource was also created on our side and success
                 message: 'Post created successfully',
                 post: post,
