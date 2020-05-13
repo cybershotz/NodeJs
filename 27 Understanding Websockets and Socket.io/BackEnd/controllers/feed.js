@@ -32,6 +32,7 @@ exports.getPosts = (req, res, next) => {
     Post.find()
         .populate('creator')
         .countDocuments()
+        .sort({ createdAt: -1 })
         .then(count => {
             totalItems = count;
             return Post.find()
