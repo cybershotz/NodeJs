@@ -4,6 +4,7 @@ const mongoose = require('mongoose')
 const path = require('path')
 const multer = require('multer')
 const helmet = require('helmet')
+const compression = require('compression')
 
 const feedRoute = require('./routes/feed')
 const authRoute = require('./routes/auth')
@@ -36,6 +37,7 @@ const fileFilter = (req, file, cb) => {
 }
 
 app.use(helmet());
+app.use(compression());
 
 // app.use(bodyParser.urlencoded()); // x-www-form-urlencoded <form>
 app.use(bodyParser.json()); // application/json
