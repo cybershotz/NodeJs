@@ -1,10 +1,12 @@
 const express = require('express');
+const fs = require('fs');
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 const path = require('path')
 const multer = require('multer')
 const helmet = require('helmet')
 const compression = require('compression')
+const morgan = require('morgan')
 
 const feedRoute = require('./routes/feed')
 const authRoute = require('./routes/auth')
@@ -12,9 +14,13 @@ const authRoute = require('./routes/auth')
 const app = express();
 
 // const MONGODB_URI = 'mongodb+srv://ammar:HSDI2cHcKTqdBx4s@cluster0-mylyc.mongodb.net/messages'
-const MONGODB_URI = 
-`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0-mylyc.mongodb.net/
+const MONGODB_URI =
+    `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0-mylyc.mongodb.net/
 ${process.env.MONGO_DEFAULT_DATABASE}`
+
+const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'),
+    { flags: 'a' } // append
+)
 
 const fileStorage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -38,6 +44,7 @@ const fileFilter = (req, file, cb) => {
 
 app.use(helmet());
 app.use(compression());
+app.use(morgan('combined', { stream: accessLogStream }));
 
 // app.use(bodyParser.urlencoded()); // x-www-form-urlencoded <form>
 app.use(bodyParser.json()); // application/json
