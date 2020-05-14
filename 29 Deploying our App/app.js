@@ -9,7 +9,10 @@ const authRoute = require('./routes/auth')
 
 const app = express();
 
-const MONGODB_URI = 'mongodb+srv://ammar:HSDI2cHcKTqdBx4s@cluster0-mylyc.mongodb.net/messages'
+// const MONGODB_URI = 'mongodb+srv://ammar:HSDI2cHcKTqdBx4s@cluster0-mylyc.mongodb.net/messages'
+const MONGODB_URI = 
+`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0-mylyc.mongodb.net/
+${process.env.MONGO_DEFAULT_DATABASE}`
 
 const fileStorage = multer.diskStorage({
     destination: (req, file, cb) => {
